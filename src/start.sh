@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-#!/usr/bin/env bash
-
-# ComfyUI venv 우선 사용
-export PATH="/comfyui/.venv/bin:${PATH}"
+# opt/venv와 comfyui/.venv 둘 다 PATH에 추가
+# handler.py는 runpod(opt/venv), ComfyUI는 torch(comfyui/.venv) 필요
+export PATH="/opt/venv/bin:/comfyui/.venv/bin:${PATH}"
 
 # Start SSH server if PUBLIC_KEY is set (enables remote access and dev-sync.sh)
 if [ -n "$PUBLIC_KEY" ]; then

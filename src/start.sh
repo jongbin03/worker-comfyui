@@ -50,6 +50,19 @@ echo "worker-comfyui: GPU available — $GPU_CHECK"
 # Ensure ComfyUI-Manager runs in offline network mode inside the container
 comfy-manager-set-mode offline || echo "worker-comfyui - Could not set ComfyUI-Manager network_mode" >&2
 
+# ── Network Volume custom_nodes 복사 ──────────────────────────
+echo "worker-comfyui: Copying custom_nodes from Network Volume..."
+if [ -d "/runpod-volume/runpod-slim/ComfyUI/custom_nodes" ]; then
+    rm -rf /comfyui/custom_nodes/custom_nodes
+    cp -r /runpod-volume/runpod-slim/ComfyUI/custom_nodes/* /comfyui/custom_nodes/ 2>/dev/null \
+        || echo "worker-comfyui: No custom nodes to copy"
+    echo "worker-comfyui: Custom nodes copy done."
+    ls -la /comfyui/custom_nodes/
+else
+    echo "worker-comfyui: No custom_nodes dir in Network Volume."
+fi
+# ─────────────────────────────────────────────────────────────
+
 echo "worker-comfyui: Starting ComfyUI"
 
 # Allow operators to tweak verbosity; default is DEBUG.

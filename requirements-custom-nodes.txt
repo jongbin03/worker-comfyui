@@ -1,6 +1,5 @@
 opencv-python-headless
 piexif
-scikit-image
 accelerate
 simpleeval
 huggingface_hub

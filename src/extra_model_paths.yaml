@@ -1,5 +1,5 @@
 runpod_worker_comfy:
-  base_path: /runpod-volume/ComfyUI/models
+  base_path: /runpod-volume/runpod-slim/ComfyUI/models
   checkpoints: checkpoints/
   clip: clip/
   clip_vision: clip_vision/
@@ -16,7 +16,6 @@ runpod_worker_comfy:
   gligen: gligen/
   hypernetworks: hypernetworks/
   photomaker: photomaker/
-  pulid: pulid/
+  ipadapter: ipadapter/
   style_models: style_models/
   vae_approx: vae_approx/
-  wget-log: wget-log/

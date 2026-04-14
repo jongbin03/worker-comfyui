@@ -1,6 +1,4 @@
-opencv-python
-gguf
-numba
+opencv-python-headless
 piexif
 scikit-image
 accelerate

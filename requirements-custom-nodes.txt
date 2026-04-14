@@ -1,0 +1,12 @@
+opencv-python
+gguf
+numba
+piexif
+scikit-image
+accelerate
+simpleeval
+huggingface_hub
+transformers
+diffusers
+insightface
+onnxruntime-gpu

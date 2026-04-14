@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+#!/usr/bin/env bash
+
+# ComfyUI venv 우선 사용
+export PATH="/comfyui/.venv/bin:${PATH}"
+
 # Start SSH server if PUBLIC_KEY is set (enables remote access and dev-sync.sh)
 if [ -n "$PUBLIC_KEY" ]; then
     mkdir -p ~/.ssh

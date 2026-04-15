@@ -5,5 +5,5 @@ simpleeval
 huggingface_hub
 transformers
 diffusers
-insightface
+insightface==0.7.3
 onnxruntime-gpu

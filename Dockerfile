@@ -82,7 +82,7 @@ RUN uv pip install runpod requests websocket-client
 
 # Custom nodes 공통 의존성 설치
 COPY requirements-custom-nodes.txt /tmp/requirements-custom-nodes.txt
-RUN uv pip install -r /tmp/requirements-custom-nodes.txt
+RUN /comfyui/.venv/bin/pip install -r /tmp/requirements-custom-nodes.txt
 
 # Add application code and scripts
 ADD src/start.sh src/network_volume.py handler.py test_input.json ./

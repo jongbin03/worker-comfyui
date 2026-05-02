@@ -7,3 +7,33 @@ transformers
 diffusers
 insightface==0.7.3
 onnxruntime-gpu
+
+# comfyui_controlnet_aux
+scipy
+filelock
+numpy
+Pillow
+einops
+pyyaml
+scikit-image
+python-dateutil
+mediapipe>=0.8.0
+fvcore
+yapf
+omegaconf
+ftfy
+addict
+yacs
+trimesh[easy]
+albumentations
+scikit-learn
+matplotlib
+
+# ComfyUI-KJNodes
+color-matcher
+mss
+
+# AlekPet translate nodes
+googletrans-py
+deep-translator
+git+https://github.com/argosopentech/argos-translate.git@08f017c324628434d671cf4d191ce681c620ff33

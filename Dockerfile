@@ -37,6 +37,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libffi-dev \
     libjpeg-dev \
+    libgomp1 \
     zlib1g-dev \
     && ln -sf /usr/bin/python3.12 /usr/bin/python \
     && ln -sf /usr/bin/pip3 /usr/bin/pip
@@ -73,6 +74,14 @@ WORKDIR /comfyui
 
 # Support for the network volume
 ADD src/extra_model_paths.yaml ./
+
+# 운영 이미지에 커스텀 노드를 고정해 cold start 시 복사 비용을 줄입니다.
+WORKDIR /comfyui/custom_nodes
+RUN git clone --depth 1 https://github.com/kijai/ComfyUI-KJNodes.git \
+    && git clone --depth 1 https://github.com/AlekPet/ComfyUI_Custom_Nodes_AlekPet.git \
+    && git clone --depth 1 https://github.com/cubiq/ComfyUI_IPAdapter_plus.git comfyui_ipadapter_plus \
+    && git clone --depth 1 https://github.com/rgthree/rgthree-comfy.git \
+    && git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux.git
 
 # Go back to the root
 WORKDIR /

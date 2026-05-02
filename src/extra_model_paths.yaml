@@ -17,5 +17,6 @@ runpod_worker_comfy:
   hypernetworks: hypernetworks/
   photomaker: photomaker/
   ipadapter: ipadapter/
+  insightface: insightface/
   style_models: style_models/
   vae_approx: vae_approx/

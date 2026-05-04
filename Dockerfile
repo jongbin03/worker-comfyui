@@ -9,6 +9,8 @@ ARG COMFYUI_VERSION=latest
 ARG CUDA_VERSION_FOR_COMFY
 ARG ENABLE_PYTORCH_UPGRADE=false
 ARG PYTORCH_INDEX_URL
+ARG INSTANT_LORA_VERSION=d1539b389815d3911fa21d6aeea56258f3cb1abd
+ARG SD_SCRIPTS_VERSION=1a3ec9ea745fe9883551dfca5c947ea3d6aa68c7
 
 # Prevents prompts from packages asking for user input during installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -81,7 +83,29 @@ RUN git clone --depth 1 https://github.com/kijai/ComfyUI-KJNodes.git \
     && git clone --depth 1 https://github.com/AlekPet/ComfyUI_Custom_Nodes_AlekPet.git \
     && git clone --depth 1 https://github.com/cubiq/ComfyUI_IPAdapter_plus.git comfyui_ipadapter_plus \
     && git clone --depth 1 https://github.com/rgthree/rgthree-comfy.git \
-    && git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux.git
+    && git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux.git \
+    && git clone --filter=blob:none https://github.com/Toraong/comfyui-instant-lora.git comfyui-instant-lora \
+    && cd comfyui-instant-lora \
+    && git fetch --depth 1 origin "${INSTANT_LORA_VERSION}" \
+    && git checkout --detach FETCH_HEAD \
+    && /comfyui/.venv/bin/pip install -r requirements.txt
+
+# LoRA 학습 런타임을 이미지에 포함해 cold start 중 sd-scripts/venv 설치를 피합니다.
+RUN git clone --filter=blob:none https://github.com/kohya-ss/sd-scripts.git /opt/sd-scripts \
+    && cd /opt/sd-scripts \
+    && git fetch --depth 1 origin "${SD_SCRIPTS_VERSION}" \
+    && git checkout --detach FETCH_HEAD \
+    && mkdir -p /comfyui/custom_nodes/comfyui-instant-lora/runtime \
+    && ln -s /opt/sd-scripts /comfyui/custom_nodes/comfyui-instant-lora/runtime/sd-scripts \
+    && uv venv --python /comfyui/.venv/bin/python --system-site-packages /comfyui/custom_nodes/comfyui-instant-lora/runtime/venv \
+    && VIRTUAL_ENV=/comfyui/custom_nodes/comfyui-instant-lora/runtime/venv \
+       UV_PYTHON=/comfyui/custom_nodes/comfyui-instant-lora/runtime/venv/bin/python \
+       PATH="/comfyui/custom_nodes/comfyui-instant-lora/runtime/venv/bin:${PATH}" \
+       uv sync --python /comfyui/custom_nodes/comfyui-instant-lora/runtime/venv/bin/python \
+         --active \
+         --project /comfyui/custom_nodes/comfyui-instant-lora/runtime_env \
+         --no-install-project \
+    && echo "12" > /comfyui/custom_nodes/comfyui-instant-lora/runtime/venv/.sd_scripts_ready
 
 # Go back to the root
 WORKDIR /

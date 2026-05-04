@@ -35,6 +35,14 @@ variable "HUGGINGFACE_ACCESS_TOKEN" {
   default = ""
 }
 
+variable "INSTANT_LORA_VERSION" {
+  default = "d1539b389815d3911fa21d6aeea56258f3cb1abd"
+}
+
+variable "SD_SCRIPTS_VERSION" {
+  default = "1a3ec9ea745fe9883551dfca5c947ea3d6aa68c7"
+}
+
 group "default" {
   targets = ["base", "sdxl", "sd3", "flux1-schnell", "flux1-dev", "flux1-dev-fp8", "z-image-turbo", "base-cuda12-8-1"]
 }
@@ -50,6 +58,8 @@ target "base" {
     CUDA_VERSION_FOR_COMFY = "${CUDA_VERSION_FOR_COMFY}"
     ENABLE_PYTORCH_UPGRADE = "${ENABLE_PYTORCH_UPGRADE}"
     PYTORCH_INDEX_URL = "${PYTORCH_INDEX_URL}"
+    INSTANT_LORA_VERSION = "${INSTANT_LORA_VERSION}"
+    SD_SCRIPTS_VERSION = "${SD_SCRIPTS_VERSION}"
     MODEL_TYPE = "base"
   }
   tags = ["${DOCKERHUB_REPO}/${DOCKERHUB_IMG}:${RELEASE_VERSION}-base"]
@@ -166,6 +176,8 @@ target "base-cuda12-8-1" {
     CUDA_VERSION_FOR_COMFY = ""
     ENABLE_PYTORCH_UPGRADE = "true"
     PYTORCH_INDEX_URL = "https://download.pytorch.org/whl/cu128"
+    INSTANT_LORA_VERSION = "${INSTANT_LORA_VERSION}"
+    SD_SCRIPTS_VERSION = "${SD_SCRIPTS_VERSION}"
     MODEL_TYPE = "base"
   }
   tags = ["${DOCKERHUB_REPO}/${DOCKERHUB_IMG}:${RELEASE_VERSION}-base-cuda12.8.1"]

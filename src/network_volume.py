@@ -19,7 +19,14 @@ MODEL_TYPES = {
     "upscale_models": [".safetensors", ".pt", ".pth"],
     "vae": [".safetensors", ".pt", ".bin"],
     "unet": [".safetensors", ".pt", ".bin"],
+    "ipadapter": [".safetensors", ".pt", ".bin"],
+    "insightface": [".onnx", ".zip"],
 }
+
+MODEL_BASE_PATHS = [
+    "/runpod-volume/runpod-slim/ComfyUI/models",
+    "/runpod-volume/models",
+]
 
 
 def is_network_volume_debug_enabled():
@@ -67,7 +74,7 @@ def run_network_volume_diagnostics():
 
     # Check directory structure
     print("\n[3] Checking directory structure...")
-    models_dir = os.path.join(runpod_volume, "models")
+    models_dir = next((path for path in MODEL_BASE_PATHS if os.path.isdir(path)), MODEL_BASE_PATHS[0])
     if os.path.isdir(models_dir):
         print(f"    ✓ FOUND: {models_dir}")
     else:
@@ -125,6 +132,22 @@ def run_network_volume_diagnostics():
         print("    - VAE: .safetensors, .pt, .bin")
         print("    - etc.")
 
+    print("\n[6] Checking InsightFace runtime cache...")
+    cache_paths = [
+        "/comfyui/models/insightface/models/buffalo_l",
+        "/root/.insightface/models/buffalo_l",
+    ]
+    for cache_path in cache_paths:
+        if os.path.exists(cache_path):
+            print(f"    ✓ FOUND: {cache_path}")
+            if os.path.islink(cache_path):
+                print(f"    symlink target: {os.readlink(cache_path)}")
+            print_directory_preview(cache_path)
+        else:
+            print(f"    ✗ NOT FOUND: {cache_path}")
+    if not any(os.path.exists(path) for path in cache_paths):
+        print("    IPAdapterInsightFaceLoader may download buffalo_l during workflow execution.")
+
     print_expected_structure()
     print("=" * 70)
 
@@ -140,7 +163,29 @@ def print_expected_structure():
     print("        ├── clip/           <- Put your CLIP models here")
     print("        ├── controlnet/     <- Put your ControlNet models here")
     print("        ├── embeddings/     <- Put your embedding files here")
-    print("        └── upscale_models/ <- Put your upscale models here")
+    print("        ├── upscale_models/ <- Put your upscale models here")
+    print("        ├── ipadapter/      <- Put IPAdapter model files here")
+    print("        └── insightface/    <- Put buffalo_l/ or buffalo_l .onnx files here")
+
+
+def print_directory_preview(path):
+    """Print a short preview of files under a directory or symlink target."""
+    try:
+        if not os.path.isdir(path):
+            print("    cache path exists but is not a directory")
+            return
+        entries = sorted(os.listdir(path))[:10]
+        if not entries:
+            print("    cache directory is empty")
+            return
+        for entry in entries:
+            file_path = os.path.join(path, entry)
+            if os.path.isfile(file_path):
+                print(f"      - {entry} ({format_size(os.path.getsize(file_path))})")
+            else:
+                print(f"      - {entry}/")
+    except Exception as e:
+        print(f"    Error reading cache directory: {e}")
 
 
 def format_size(size_bytes):

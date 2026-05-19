@@ -85,16 +85,16 @@ RUN git clone --depth 1 https://github.com/kijai/ComfyUI-KJNodes.git \
     && git clone --depth 1 https://github.com/rgthree/rgthree-comfy.git \
     && git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux.git \
     && git clone --filter=blob:none https://github.com/Toraong/comfyui-instant-lora.git comfyui-instant-lora \
-    && cd comfyui-instant-lora \
-    && git fetch --depth 1 origin "${INSTANT_LORA_VERSION}" \
-    && git checkout --detach FETCH_HEAD \
-    && /comfyui/.venv/bin/pip install -r requirements.txt
+    && git -C comfyui-instant-lora fetch --depth 1 origin "${INSTANT_LORA_VERSION}" \
+    && git -C comfyui-instant-lora checkout --detach FETCH_HEAD \
+    && git clone --depth 1 https://github.com/1038lab/ComfyUI-RMBG.git \
+    && git clone --depth 1 https://github.com/ltdrdata/ComfyUI-Impact-Pack.git \
+    && git clone --depth 1 https://github.com/ltdrdata/ComfyUI-Impact-Subpack.git
 
 # LoRA 학습 런타임을 이미지에 포함해 cold start 중 sd-scripts/venv 설치를 피합니다.
 RUN git clone --filter=blob:none https://github.com/kohya-ss/sd-scripts.git /opt/sd-scripts \
-    && cd /opt/sd-scripts \
-    && git fetch --depth 1 origin "${SD_SCRIPTS_VERSION}" \
-    && git checkout --detach FETCH_HEAD \
+    && git -C /opt/sd-scripts fetch --depth 1 origin "${SD_SCRIPTS_VERSION}" \
+    && git -C /opt/sd-scripts checkout --detach FETCH_HEAD \
     && mkdir -p /comfyui/custom_nodes/comfyui-instant-lora/runtime \
     && ln -s /opt/sd-scripts /comfyui/custom_nodes/comfyui-instant-lora/runtime/sd-scripts \
     && uv venv --python /comfyui/.venv/bin/python --system-site-packages /comfyui/custom_nodes/comfyui-instant-lora/runtime/venv \
@@ -113,9 +113,16 @@ WORKDIR /
 # Install Python runtime dependencies for the handler
 RUN uv pip install runpod requests websocket-client
 
+# Prevent pip from asking for confirmation during uninstall steps in custom nodes
+ENV PIP_NO_INPUT=1
+
 # Custom nodes 공통 의존성 설치
 COPY requirements-custom-nodes.txt /tmp/requirements-custom-nodes.txt
 RUN /comfyui/.venv/bin/pip install -r /tmp/requirements-custom-nodes.txt
+
+# Impact Pack setup without baking downloaded models into the image
+RUN touch /comfyui/custom_nodes/skip_download_model \
+    && /comfyui/.venv/bin/python /comfyui/custom_nodes/ComfyUI-Impact-Pack/install.py
 
 # Add application code and scripts
 ADD src/start.sh src/network_volume.py handler.py test_input.json ./
@@ -124,9 +131,6 @@ RUN chmod +x /start.sh
 # Add script to install custom nodes
 COPY scripts/comfy-node-install.sh /usr/local/bin/comfy-node-install
 RUN chmod +x /usr/local/bin/comfy-node-install
-
-# Prevent pip from asking for confirmation during uninstall steps in custom nodes
-ENV PIP_NO_INPUT=1
 
 # Copy helper script to switch Manager network mode at container start
 COPY scripts/comfy-manager-set-mode.sh /usr/local/bin/comfy-manager-set-mode

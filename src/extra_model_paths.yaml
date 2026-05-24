@@ -18,5 +18,30 @@ runpod_worker_comfy:
   photomaker: photomaker/
   ipadapter: ipadapter/
   insightface: insightface/
+  ultralytics: ultralytics/
+  style_models: style_models/
+  vae_approx: vae_approx/
+
+runpod_worker_comfy_flat:
+  base_path: /runpod-volume/models
+  checkpoints: checkpoints/
+  clip: clip/
+  clip_vision: clip_vision/
+  configs: configs/
+  controlnet: controlnet/
+  embeddings: embeddings/
+  loras: loras/
+  upscale_models: upscale_models/
+  vae: vae/
+  unet: unet/
+  diffusion_models: diffusion_models/
+  text_encoders: text_encoders/
+  diffusers: diffusers/
+  gligen: gligen/
+  hypernetworks: hypernetworks/
+  photomaker: photomaker/
+  ipadapter: ipadapter/
+  insightface: insightface/
+  ultralytics: ultralytics/
   style_models: style_models/
   vae_approx: vae_approx/

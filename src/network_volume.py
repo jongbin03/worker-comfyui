@@ -166,7 +166,9 @@ def print_expected_structure():
     print("        ├── embeddings/     <- Put your embedding files here")
     print("        ├── upscale_models/ <- Put your upscale models here")
     print("        ├── ipadapter/      <- Put IPAdapter model files here")
-    print("        ├── ultralytics/    <- Put YOLO detector models under bbox/ or segm/")
+    print("        ├── ultralytics/")
+    print("        │   ├── bbox/       <- Put bbox detector models here")
+    print("        │   └── segm/       <- Put segm detector models here")
     print("        └── insightface/    <- Put buffalo_l/ or buffalo_l .onnx files here")
 
 
